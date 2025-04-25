@@ -1,4 +1,4 @@
-package com.example.news_app.data
+package com.example.news_app.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -12,10 +12,11 @@ data class NewsItem(
     val urlToImage: String,
     val publishedAt: String,
     val content: String,
+    var isBookmarked: Boolean = false,
 ) : Parcelable
 
 
 @Parcelize
 data class NewsResponse(
-   val response : List<NewsItem>
-): Parcelable
+    val articles: List<NewsItem>
+) : Parcelable

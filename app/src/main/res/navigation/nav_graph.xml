@@ -7,12 +7,29 @@
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.news_app.ui.SearchFragment"
+        android:name="com.example.news_app.ui.fragment.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_articleFragment"
+            app:destination="@id/articleFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
     <fragment
         android:id="@+id/bookmarkFragment"
-        android:name="com.example.news_app.ui.BookmarkFragment"
+        android:name="com.example.news_app.ui.fragment.bookmark.BookmarkFragment"
         android:label="fragment_bookmark"
         tools:layout="@layout/fragment_bookmark" />
+    <fragment
+        android:id="@+id/articleFragment"
+        android:name="com.example.news_app.ui.fragment.article.ArticleFragment"
+        android:label="fragment_article"
+        tools:layout="@layout/fragment_article" >
+        <argument
+            android:name="newsItem"
+            app:argType="com.example.news_app.data.model.NewsItem" />
+    </fragment>
 </navigation>

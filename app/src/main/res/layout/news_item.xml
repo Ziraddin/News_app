@@ -30,6 +30,14 @@
             android:text="News Title"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
+        <ImageView
+            android:id="@+id/bookmarkIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/bookmark_icon" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.cardview.widget.CardView>
