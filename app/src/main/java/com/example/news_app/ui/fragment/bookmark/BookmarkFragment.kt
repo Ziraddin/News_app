@@ -1,10 +1,12 @@
 package com.example.news_app.ui.fragment.bookmark
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
@@ -13,13 +15,15 @@ import com.example.news_app.ui.MainActivity
 import com.example.news_app.ui.adapter.NewsRVadapter
 import com.example.news_app.ui.fragment.search.SearchFragmentDirections
 import com.example.news_app.ui.viewmodel.BookmarkViewModel
+import kotlinx.coroutines.launch
+import kotlin.collections.mutableListOf
 
 class BookmarkFragment : Fragment() {
 
     lateinit var binding: FragmentBookmarkBinding
     lateinit var bookmarkViewModel: BookmarkViewModel
     lateinit var rVadapter: NewsRVadapter
-    private var data: List<NewsItem> = emptyList<NewsItem>()
+    private var data: MutableList<NewsItem> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -27,14 +31,14 @@ class BookmarkFragment : Fragment() {
         binding = FragmentBookmarkBinding.inflate(inflater, container, false)
         bookmarkViewModel = (activity as MainActivity).bookmarkViewModel
         rVadapter = NewsRVadapter(
-            emptyList(),
+            data,
             ::navigateToDetails,
             bookmarkAdd = ::bookmarkAdd,
             bookmarkRemove = ::bookmarkRemove
         )
 
         setUpRecyclerView()
-        observeBookmarks()
+        collectBookmarks()
 
         return binding.root
     }
@@ -57,10 +61,13 @@ class BookmarkFragment : Fragment() {
         navController.navigate(action)
     }
 
-    private fun observeBookmarks() {
-        bookmarkViewModel.bookmarks.observe(viewLifecycleOwner) { bookmarks ->
-            data = bookmarks
-            rVadapter.updateData(data)
+    private fun collectBookmarks() {
+        lifecycleScope.launch {
+            bookmarkViewModel.bookmarks.collect { bookmarks ->
+                Log.d("BookmarkFragment", "Bookmarks collected: $bookmarks")
+                data = bookmarks.toMutableList()
+                rVadapter.submitList(data)
+            }
         }
     }
 }

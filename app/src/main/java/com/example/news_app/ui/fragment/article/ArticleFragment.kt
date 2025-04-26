@@ -1,6 +1,8 @@
 package com.example.news_app.ui.fragment.article
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentArticleBinding
+import androidx.core.net.toUri
 
 
 class ArticleFragment : Fragment() {
@@ -40,6 +43,13 @@ class ArticleFragment : Fragment() {
         Glide.with(this)
             .load(newsItem.urlToImage)
             .into(binding.imageView)
+
+        binding.urlTextView.text = newsItem.url
+
+        binding.urlTextView.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, newsItem.url.toUri())
+            startActivity(intent)
+        }
     }
 
 }

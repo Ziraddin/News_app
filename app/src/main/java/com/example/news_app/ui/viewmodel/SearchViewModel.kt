@@ -6,6 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.data.repository.NewsRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class SearchState {
@@ -16,8 +20,8 @@ sealed class SearchState {
 }
 
 class SearchViewModel(private val repository: NewsRepository) : ViewModel() {
-    private val _searchState = MutableLiveData<SearchState>(SearchState.Idle)
-    val searchState: LiveData<SearchState> = this._searchState
+    private val _searchState = MutableStateFlow<SearchState>(SearchState.Idle)
+    val searchState: StateFlow<SearchState> = this._searchState
 
     fun searchNews(query: String) {
         viewModelScope.launch {
