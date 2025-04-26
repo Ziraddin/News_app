@@ -11,7 +11,6 @@ import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.NewsItemBinding
 
 class NewsRVadapter(
-    private var data: MutableList<NewsItem>,
     private val navigateToDetails: (NewsItem) -> Unit,
     private val bookmarkAdd: (NewsItem) -> Unit = {},
     private val bookmarkRemove: (NewsItem) -> Unit = {},
@@ -42,34 +41,20 @@ class NewsRVadapter(
                     binding.bookmarkIcon.setImageResource(R.drawable.bookmark_filled)
                 }
             }
-
-            binding.root.setOnClickListener {
-                navigateToDetails(newsItem)
-            }
         }
     }
 
-    val diffCallback = object : DiffUtil.ItemCallback<NewsItem>() {
+    private val diffCallback = object : DiffUtil.ItemCallback<NewsItem>() {
         override fun areItemsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
-            return oldItem.url == newItem.url
+            return oldItem.title == newItem.title
         }
 
         override fun areContentsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
             return oldItem == newItem
         }
-
-        override fun getChangePayload(oldItem: NewsItem, newItem: NewsItem): Any? {
-            return when {
-                oldItem.isBookmarked != newItem.isBookmarked -> {
-
-                }
-
-                else -> null
-            }
-        }
     }
 
-    val asyncListDiffer = AsyncListDiffer(this, diffCallback)
+    private val asyncListDiffer = AsyncListDiffer(this, diffCallback)
 
     fun submitList(newData: List<NewsItem>) {
         asyncListDiffer.submitList(newData)
@@ -81,11 +66,14 @@ class NewsRVadapter(
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        data = asyncListDiffer.currentList
+        val data = asyncListDiffer.currentList
         holder.bind(data[position])
+        holder.itemView.setOnClickListener {
+            navigateToDetails(data[position])
+        }
     }
 
-    override fun getItemCount(): Int = data.size
+    override fun getItemCount(): Int = asyncListDiffer.currentList.size
 }
 
 

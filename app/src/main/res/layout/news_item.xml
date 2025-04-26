@@ -19,7 +19,7 @@
             android:id="@+id/newsCoverImage"
             android:layout_width="0dp"
             android:layout_height="120dp"
-            android:layout_weight="0.3"
+            android:layout_weight="0.5"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background" />
 
@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="12dp"
-            android:layout_weight="0.6"
+            android:layout_weight="0.4"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"

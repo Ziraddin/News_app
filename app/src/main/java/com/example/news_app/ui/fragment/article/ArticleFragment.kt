@@ -1,30 +1,27 @@
 package com.example.news_app.ui.fragment.article
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentArticleBinding
-import androidx.core.net.toUri
 
 
 class ArticleFragment : Fragment() {
 
-    lateinit var binding: FragmentArticleBinding
+    private lateinit var binding: FragmentArticleBinding
     private val args: ArticleFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentArticleBinding.inflate(inflater, container, false)
 
         val newsItem: NewsItem = args.newsItem

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.news_app.R
+import com.example.news_app.data.local.SharedPreferences
 import com.example.news_app.data.repository.NewsRepository
 import com.example.news_app.databinding.ActivityMainBinding
 import com.example.news_app.ui.viewmodel.BookmarkViewModel
@@ -22,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
 
         searchViewModel = SearchViewModel(NewsRepository())
-        bookmarkViewModel = BookmarkViewModel()
+        val sharedPreferences = SharedPreferences(this)
+        bookmarkViewModel = BookmarkViewModel(sharedPreferences)
 
         //Force Light Mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

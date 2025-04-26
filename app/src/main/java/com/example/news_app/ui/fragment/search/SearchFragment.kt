@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentSearchBinding
@@ -24,22 +25,19 @@ class SearchFragment : Fragment() {
     lateinit var rVadapter: NewsRVadapter
     lateinit var searchViewModel: SearchViewModel
     lateinit var bookmarkViewModel: BookmarkViewModel
-    private var data: MutableList<NewsItem> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         searchViewModel = (activity as MainActivity).searchViewModel
         bookmarkViewModel = (activity as MainActivity).bookmarkViewModel
         rVadapter = NewsRVadapter(
-            data,
-            ::navigateToDetails,
-            bookmarkAdd = ::bookmarkAdd,
-            bookmarkRemove = ::bookmarkRemove
+            ::navigateToDetails, bookmarkAdd = ::bookmarkAdd, bookmarkRemove = ::bookmarkRemove
         )
         setUpRecyclerView()
         search()
+        collectResults()
         return binding.root
     }
 
@@ -65,36 +63,40 @@ class SearchFragment : Fragment() {
     private fun search() {
         binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchViewModel.searchNews(query.toString())
+                if (!query.isNullOrEmpty()) {
+                    searchViewModel.searchNews(query.toString())
+                }
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
+            override fun onQueryTextChange(newText: String?): Boolean = false
+
         })
-        collectResults()
     }
 
     private fun collectResults() {
-        lifecycleScope.launch {
-            searchViewModel.searchState.collect { response ->
-                when (response) {
-                    is SearchState.Success -> {
-                        data = response.result.toMutableList()
-                        rVadapter.submitList(data)
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                searchViewModel.searchState.collect { response ->
+                    when (response) {
+                        is SearchState.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.recyclerViewNews.visibility = View.VISIBLE
+                            rVadapter.submitList(response.result)
+                        }
 
-                    is SearchState.Loading -> {
-                        println("Loading")
-                    }
+                        is SearchState.Loading -> {
+                            binding.recyclerViewNews.visibility = View.INVISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
 
-                    is SearchState.Error -> {
-                        println("Error: ${response.message}")
-                    }
+                        is SearchState.Error -> {
+                            println("Error: ${response.message}")
+                        }
 
-                    is SearchState.Idle -> {
-                        println("Idle")
+                        is SearchState.Idle -> {
+                            println("Idle")
+                        }
                     }
                 }
             }

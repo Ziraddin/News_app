@@ -8,33 +8,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentBookmarkBinding
 import com.example.news_app.ui.MainActivity
 import com.example.news_app.ui.adapter.NewsRVadapter
-import com.example.news_app.ui.fragment.search.SearchFragmentDirections
 import com.example.news_app.ui.viewmodel.BookmarkViewModel
 import kotlinx.coroutines.launch
-import kotlin.collections.mutableListOf
 
 class BookmarkFragment : Fragment() {
 
     lateinit var binding: FragmentBookmarkBinding
     lateinit var bookmarkViewModel: BookmarkViewModel
     lateinit var rVadapter: NewsRVadapter
-    private var data: MutableList<NewsItem> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentBookmarkBinding.inflate(inflater, container, false)
         bookmarkViewModel = (activity as MainActivity).bookmarkViewModel
         rVadapter = NewsRVadapter(
-            data,
-            ::navigateToDetails,
-            bookmarkAdd = ::bookmarkAdd,
-            bookmarkRemove = ::bookmarkRemove
+            ::navigateToDetails, bookmarkAdd = ::bookmarkAdd, bookmarkRemove = ::bookmarkRemove
         )
 
         setUpRecyclerView()
@@ -57,7 +50,7 @@ class BookmarkFragment : Fragment() {
 
     private fun navigateToDetails(newsItem: NewsItem) {
         val navController = findNavController()
-        val action = SearchFragmentDirections.actionSearchFragmentToArticleFragment(newsItem)
+        val action = BookmarkFragmentDirections.actionBookmarkFragmentToArticleFragment(newsItem)
         navController.navigate(action)
     }
 
@@ -65,8 +58,7 @@ class BookmarkFragment : Fragment() {
         lifecycleScope.launch {
             bookmarkViewModel.bookmarks.collect { bookmarks ->
                 Log.d("BookmarkFragment", "Bookmarks collected: $bookmarks")
-                data = bookmarks.toMutableList()
-                rVadapter.submitList(data)
+                rVadapter.submitList(bookmarks)
             }
         }
     }
