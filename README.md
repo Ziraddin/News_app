@@ -5,8 +5,9 @@ It fetches real-time news using the **News API**.
 
 ## ✨ Features
 1. **Search News** – Search for any topic with a SearchView.
-2. **Bookmarks Screen** – Save and manage your favorite articles.
-3. **Open in Browser** – Open articles directly via an external browser.
+2. **Article Details Screen** - Read News with details (author, publication time, etc.)
+3. **Bookmarks Screen** – Save and manage your favorite articles.
+4. **Open in Browser** – Open articles directly via an external browser.
 
 ## 🛠 Tech Stack
 - Kotlin
