@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.data.repository.NewsRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed class SearchState {
@@ -15,9 +17,15 @@ sealed class SearchState {
     data class Error(val message: String) : SearchState()
 }
 
+sealed class SearchSideEffect {
+    data class ShowNewsError(val message: String) : SearchSideEffect()
+}
+
 class SearchViewModel(private val repository: NewsRepository) : ViewModel() {
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Idle)
     val searchState: StateFlow<SearchState> = this._searchState
+    private val _searchSideEffect = MutableSharedFlow<SearchSideEffect>()
+    val searchSideEffect: MutableSharedFlow<SearchSideEffect> = this._searchSideEffect
 
     fun searchNews(query: String) {
         viewModelScope.launch {
@@ -34,7 +42,8 @@ class SearchViewModel(private val repository: NewsRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                _searchState.value = SearchState.Error("Exception: ${e.localizedMessage}")
+                _searchSideEffect.emit(SearchSideEffect.ShowNewsError("Exception: SHARED FLOW"))
+                _searchState.value = SearchState.Error("Exception: STATE FLOW")
             }
         }
     }

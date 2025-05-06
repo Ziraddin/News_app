@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -15,6 +16,7 @@ import com.example.news_app.databinding.FragmentSearchBinding
 import com.example.news_app.ui.MainActivity
 import com.example.news_app.ui.adapter.NewsRVadapter
 import com.example.news_app.ui.viewmodel.BookmarkViewModel
+import com.example.news_app.ui.viewmodel.SearchSideEffect
 import com.example.news_app.ui.viewmodel.SearchState
 import com.example.news_app.ui.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
@@ -77,29 +79,51 @@ class SearchFragment : Fragment() {
     private fun collectResults() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                searchViewModel.searchState.collect { response ->
-                    when (response) {
-                        is SearchState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.recyclerViewNews.visibility = View.VISIBLE
-                            rVadapter.submitList(response.result)
-                        }
+                launch {
+                    searchViewModel.searchState.collect { response ->
+                        when (response) {
+                            is SearchState.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.recyclerViewNews.visibility = View.VISIBLE
+                                rVadapter.submitList(response.result)
+                            }
 
-                        is SearchState.Loading -> {
-                            binding.recyclerViewNews.visibility = View.INVISIBLE
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
+                            is SearchState.Loading -> {
+                                binding.recyclerViewNews.visibility = View.INVISIBLE
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
 
-                        is SearchState.Error -> {
-                            println("Error: ${response.message}")
-                        }
+                            is SearchState.Error -> {
+                                Toast.makeText(
+                                    requireContext(), response.message, Toast.LENGTH_SHORT
+                                ).show()
+                            }
 
-                        is SearchState.Idle -> {
-                            println("Idle")
+                            is SearchState.Idle -> {
+                                println("Idle")
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    searchViewModel.searchSideEffect.collect { sideEffect ->
+                        when (sideEffect) {
+                            is SearchSideEffect.ShowNewsError -> {
+                                Toast.makeText(
+                                    requireContext(), sideEffect.message, Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }
             }
         }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        collectResults()
     }
 }

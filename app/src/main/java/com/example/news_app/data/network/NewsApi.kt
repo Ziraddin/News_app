@@ -10,7 +10,6 @@ interface NewsApi {
     @GET("everything/")
     suspend fun getNews(
         @Query("q") query: String,
-        @Query("apiKey") apikey: String,
     ): Response<NewsResponse>
 
 }
