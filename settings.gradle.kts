@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "News_app"
 include(":app")
+include(":benchmark")
