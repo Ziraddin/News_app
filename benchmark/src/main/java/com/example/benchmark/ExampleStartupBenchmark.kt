@@ -100,8 +100,7 @@ class ExampleStartupBenchmark {
     fun testAllMetrics() = benchmarkRule.measureRepeated(
         packageName = "com.example.news_app",
         metrics = listOf(
-            StartupTimingMetric(),
-            MemoryUsageMetric(
+            StartupTimingMetric(), MemoryUsageMetric(
                 mode = MemoryUsageMetric.Mode.Max, subMetrics = listOf(
                     MemoryUsageMetric.SubMetric.Gpu,
                     MemoryUsageMetric.SubMetric.RssAnon,
@@ -109,11 +108,9 @@ class ExampleStartupBenchmark {
                     MemoryUsageMetric.SubMetric.HeapSize,
                     MemoryUsageMetric.SubMetric.RssShmem,
                 )
-            ),
-            PowerMetric(type = PowerMetric.Battery()),
-            FrameTimingMetric()
+            ), PowerMetric(type = PowerMetric.Battery()), FrameTimingMetric()
         ),
-        iterations = 1,
+        iterations = 20,
         startupMode = StartupMode.COLD,
         compilationMode = CompilationMode.None(),
     ) {
@@ -159,12 +156,14 @@ class ExampleStartupBenchmark {
         val list = device.findObject(By.res("com.example.news_app:id/recycler_view_news"))
         list.swipe(Direction.UP, 0.3f)
         device.waitForIdle()
+        list.swipe(Direction.DOWN, 0.3f)
+        device.waitForIdle()
         Thread.sleep(1000)
     }
 
     private fun MacrobenchmarkScope.clickNewsItem() {
-        val visibleItems = device.findObjects(By.res("com.example.news_app:id/news_item"))
-        visibleItems.random().click()
+        val newsItems = device.findObjects(By.res("com.example.news_app:id/news_item"))
+        newsItems[0].click()
         Thread.sleep(1000)
         val articleDetailScreen =
             device.findObject(By.res("com.example.news_app:id/article_detail_screen"))
