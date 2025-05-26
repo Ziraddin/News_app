@@ -35,5 +35,8 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.bottomNav.setupWithNavController(navController)
+        binding.root.post {
+            reportFullyDrawn()
+        }
     }
 }

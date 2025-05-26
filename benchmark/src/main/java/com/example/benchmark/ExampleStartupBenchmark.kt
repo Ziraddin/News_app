@@ -40,13 +40,12 @@ class ExampleStartupBenchmark {
     fun startup() = benchmarkRule.measureRepeated(
         packageName = "com.example.news_app",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 1,
+        iterations = 20,
         startupMode = StartupMode.COLD,
         compilationMode = CompilationMode.None(),
     ) {
         pressHome()
         startActivityAndWait()
-        testApp()
     }
 
     @OptIn(ExperimentalMetricApi::class)
