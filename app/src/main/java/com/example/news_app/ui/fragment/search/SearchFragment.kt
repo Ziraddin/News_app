@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentSearchBinding
 import com.example.news_app.ui.MainActivity
@@ -19,14 +20,15 @@ import com.example.news_app.ui.viewmodel.BookmarkViewModel
 import com.example.news_app.ui.viewmodel.SearchSideEffect
 import com.example.news_app.ui.viewmodel.SearchState
 import com.example.news_app.ui.viewmodel.SearchViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
-    lateinit var binding: FragmentSearchBinding
-    lateinit var rVadapter: NewsRVadapter
+    private lateinit var binding: FragmentSearchBinding
+    private lateinit var rVadapter: NewsRVadapter
     lateinit var searchViewModel: SearchViewModel
-    lateinit var bookmarkViewModel: BookmarkViewModel
+    private lateinit var bookmarkViewModel: BookmarkViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -37,12 +39,17 @@ class SearchFragment : Fragment() {
         rVadapter = NewsRVadapter(
             ::navigateToDetails, bookmarkAdd = ::bookmarkAdd, bookmarkRemove = ::bookmarkRemove
         )
+        showNavbar()
         setUpRecyclerView()
         search()
         collectResults()
         return binding.root
     }
 
+    private fun showNavbar() {
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
+        bottomNav.visibility = View.VISIBLE
+    }
 
     private fun bookmarkAdd(newsItem: NewsItem) {
         bookmarkViewModel.addBookmark(newsItem)

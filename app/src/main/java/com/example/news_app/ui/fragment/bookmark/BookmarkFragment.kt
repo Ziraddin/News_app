@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.news_app.R
 import com.example.news_app.data.model.NewsItem
 import com.example.news_app.databinding.FragmentBookmarkBinding
 import com.example.news_app.ui.MainActivity
 import com.example.news_app.ui.adapter.NewsRVadapter
 import com.example.news_app.ui.viewmodel.BookmarkViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class BookmarkFragment : Fragment() {
@@ -32,7 +34,6 @@ class BookmarkFragment : Fragment() {
 
         setUpRecyclerView()
         collectBookmarks()
-
         return binding.root
     }
 
